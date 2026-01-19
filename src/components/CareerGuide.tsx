@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, ReactNode } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronDown,
   ChevronRight,
-  CheckCircle2,
+  Check,
   Circle,
   MapPin,
   Briefcase,
@@ -12,13 +13,14 @@ import {
   Star,
   AlertTriangle,
   MessageSquare,
-  Music,
+  Music2,
   Sparkles,
   Clock,
   Target,
-  Send,
+  ArrowRight,
   BookOpen,
   LucideIcon,
+  ExternalLink,
 } from 'lucide-react'
 
 interface TaskProps {
@@ -34,7 +36,6 @@ interface SectionProps {
   icon: LucideIcon
   title: string
   children: ReactNode
-  color?: 'amber' | 'blue' | 'green' | 'purple' | 'red' | 'pink' | 'teal' | 'indigo'
   badge?: string
   expandedSections: Record<string, boolean>
   toggleSection: (section: string) => void
@@ -55,89 +56,121 @@ interface WeeklyFocus {
   tasks: string[]
 }
 
-const Task = ({ id, children, priority, completedTasks, toggleTask }: TaskProps) => (
-  <div
-    onClick={() => toggleTask(id)}
-    className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all ${
-      completedTasks[id]
-        ? 'bg-green-50 text-green-800'
-        : priority === 'high'
-          ? 'bg-amber-50 hover:bg-amber-100 border-l-4 border-amber-400'
-          : 'bg-gray-50 hover:bg-gray-100'
-    }`}
-  >
-    {completedTasks[id] ? (
-      <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-    ) : (
-      <Circle className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
-    )}
-    <div className="flex-1">
-      <span className={completedTasks[id] ? 'line-through opacity-75' : ''}>{children}</span>
-      {priority === 'high' && !completedTasks[id] && (
-        <span className="ml-2 text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded">Priority</span>
-      )}
-    </div>
-  </div>
-)
-
-const colorClasses = {
-  amber: { bg: 'bg-amber-50', hover: 'hover:bg-amber-100', text: 'text-amber-600' },
-  blue: { bg: 'bg-blue-50', hover: 'hover:bg-blue-100', text: 'text-blue-600' },
-  green: { bg: 'bg-green-50', hover: 'hover:bg-green-100', text: 'text-green-600' },
-  purple: { bg: 'bg-purple-50', hover: 'hover:bg-purple-100', text: 'text-purple-600' },
-  red: { bg: 'bg-red-50', hover: 'hover:bg-red-100', text: 'text-red-600' },
-  pink: { bg: 'bg-pink-50', hover: 'hover:bg-pink-100', text: 'text-pink-600' },
-  teal: { bg: 'bg-teal-50', hover: 'hover:bg-teal-100', text: 'text-teal-600' },
-  indigo: { bg: 'bg-indigo-50', hover: 'hover:bg-indigo-100', text: 'text-indigo-600' },
+const fadeIn = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
 }
 
-const Section = ({ id, icon: Icon, title, children, color = 'indigo', badge, expandedSections, toggleSection }: SectionProps) => {
-  const colors = colorClasses[color]
-
-  return (
-    <div className="border rounded-xl overflow-hidden mb-4 shadow-sm">
-      <button
-        onClick={() => toggleSection(id)}
-        className={`w-full flex items-center gap-3 p-4 text-left transition-colors ${colors.bg} ${colors.hover}`}
-      >
-        {expandedSections[id] ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-        <Icon className={`w-5 h-5 ${colors.text}`} />
-        <span className="font-semibold text-gray-800 flex-1">{title}</span>
-        {badge && <span className="text-xs bg-white px-2 py-1 rounded-full text-gray-600">{badge}</span>}
-      </button>
-      {expandedSections[id] && (
-        <div className="p-4 bg-white space-y-2">
-          {children}
-        </div>
+const Task = ({ id, children, priority, completedTasks, toggleTask }: TaskProps) => (
+  <motion.div
+    onClick={() => toggleTask(id)}
+    className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all border ${
+      completedTasks[id]
+        ? 'bg-emerald-950/30 border-emerald-800/30 text-emerald-300'
+        : priority === 'high'
+          ? 'bg-amber-950/20 border-amber-700/30 hover:bg-amber-950/30'
+          : 'bg-slate-800/30 border-slate-700/30 hover:bg-slate-800/50'
+    }`}
+    whileHover={{ scale: 1.01 }}
+    whileTap={{ scale: 0.99 }}
+  >
+    <div className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+      completedTasks[id]
+        ? 'bg-emerald-500 border-emerald-500'
+        : priority === 'high'
+          ? 'border-amber-500'
+          : 'border-slate-500'
+    }`}>
+      {completedTasks[id] && <Check className="w-3 h-3 text-slate-900" strokeWidth={3} />}
+    </div>
+    <div className="flex-1">
+      <span className={`${completedTasks[id] ? 'line-through opacity-60' : 'text-slate-200'}`}>{children}</span>
+      {priority === 'high' && !completedTasks[id] && (
+        <span className="ml-3 text-xs font-medium text-amber-400 uppercase tracking-wide">Priority</span>
       )}
     </div>
+  </motion.div>
+)
+
+const Section = ({ id, icon: Icon, title, children, badge, expandedSections, toggleSection }: SectionProps) => {
+  return (
+    <motion.div
+      className="border border-slate-700/50 rounded-xl overflow-hidden mb-4 bg-slate-900/50 backdrop-blur-sm"
+      initial={false}
+    >
+      <button
+        onClick={() => toggleSection(id)}
+        className="w-full flex items-center gap-4 p-5 text-left transition-colors hover:bg-slate-800/50"
+      >
+        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-slate-800 border border-slate-700">
+          <Icon className="w-5 h-5 text-slate-300" />
+        </div>
+        <span className="font-semibold text-slate-100 flex-1 text-lg">{title}</span>
+        {badge && (
+          <span className="text-xs font-medium text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+            {badge}
+          </span>
+        )}
+        <motion.div
+          animate={{ rotate: expandedSections[id] ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="w-5 h-5 text-slate-500" />
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {expandedSections[id] && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="p-5 pt-0 space-y-3 border-t border-slate-800">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 
 const JobCard = ({ title, location, distance, urgent, note, type }: JobCardProps) => (
-  <div className={`p-4 rounded-lg border ${urgent ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-gray-50'}`}>
-    <div className="flex items-start justify-between">
+  <motion.div
+    className={`p-5 rounded-lg border transition-all ${
+      urgent
+        ? 'border-amber-700/50 bg-amber-950/20'
+        : 'border-slate-700/50 bg-slate-800/30'
+    }`}
+    whileHover={{ scale: 1.01, borderColor: urgent ? 'rgb(180 83 9 / 0.7)' : 'rgb(71 85 105 / 0.7)' }}
+  >
+    <div className="flex items-start justify-between gap-4">
       <div className="flex-1">
-        <h4 className="font-semibold text-gray-800">{title}</h4>
-        <div className="flex items-center gap-2 text-sm text-gray-600 mt-1 flex-wrap">
+        <h4 className="font-semibold text-slate-100">{title}</h4>
+        <div className="flex items-center gap-2 text-sm text-slate-400 mt-2 flex-wrap">
           <MapPin className="w-4 h-4" />
           <span>{location}</span>
-          <span className="text-gray-400">•</span>
+          <span className="text-slate-600">·</span>
           <span>{distance}</span>
           {type && (
             <>
-              <span className="text-gray-400">•</span>
-              <span className="text-indigo-600">{type}</span>
+              <span className="text-slate-600">·</span>
+              <span className="text-slate-300">{type}</span>
             </>
           )}
         </div>
-        {note && <p className="text-sm text-gray-600 mt-2 italic">{note}</p>}
+        {note && <p className="text-sm text-slate-500 mt-3">{note}</p>}
       </div>
       {urgent && (
-        <span className="px-2 py-1 bg-amber-200 text-amber-800 text-xs font-medium rounded flex-shrink-0">URGENT</span>
+        <span className="px-3 py-1 bg-amber-900/50 text-amber-300 text-xs font-semibold rounded-full border border-amber-700/50 uppercase tracking-wide">
+          Urgent
+        </span>
       )}
     </div>
-  </div>
+  </motion.div>
 )
 
 export default function CareerGuide() {
@@ -155,20 +188,17 @@ export default function CareerGuide() {
     weekly: false,
   })
   const [currentTip, setCurrentTip] = useState(0)
-  const [showEncouragement, setShowEncouragement] = useState(false)
   const [isClient, setIsClient] = useState(false)
 
   const tips = [
-    "You've been leading worship for 6+ years – that's not nothing, that's a calling being refined.",
-    "Your musical theatre background gives you stage presence most worship leaders have to learn the hard way.",
-    "Leading student bands means you already know how to develop volunteers from scratch.",
-    "March 1 is your target – that's 6 weeks. You can do a lot in 6 weeks.",
-    "Legacy Church knows you. That's not nepotism – that's them seeing your character for years.",
-    "Every 'no' gets you closer to the right 'yes.' Churches aren't rejecting you, they're redirecting you.",
-    "Your desire to leave your school isn't running away – it's running toward what God has for you.",
+    "Six years of consistent worship leadership is significant experience—that's not a starting point, it's a foundation.",
+    "Your musical theatre training provides stage presence and vocal technique that many worship leaders spend years developing.",
+    "Building student worship teams from scratch demonstrates the exact skills churches need: recruitment, training, and development.",
+    "The timeline to March 1st is intentional. Six focused weeks can accomplish remarkable things.",
+    "Legacy Church has observed your character over years. That continuity of witness matters deeply to church leadership.",
+    "Each application, regardless of outcome, refines your presentation and clarifies your calling.",
+    "Seeking alignment between your gifts and vocation isn't abandonment—it's stewardship.",
   ]
-
-  const encouragements = ["You're making progress!", "Keep going, Ana!", "One step at a time!", "You've got this!", "Amazing work!"]
 
   useEffect(() => {
     setIsClient(true)
@@ -185,7 +215,7 @@ export default function CareerGuide() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTip((prev) => (prev + 1) % tips.length)
-    }, 12000)
+    }, 15000)
     return () => clearInterval(timer)
   }, [tips.length])
 
@@ -195,11 +225,6 @@ export default function CareerGuide() {
       localStorage.setItem('ana-career-tasks', JSON.stringify(completedTasks))
     } catch {
       // Ignore localStorage errors
-    }
-    const completed = Object.values(completedTasks).filter(Boolean).length
-    if (completed > 0 && completed % 3 === 0) {
-      setShowEncouragement(true)
-      setTimeout(() => setShowEncouragement(false), 3000)
     }
   }, [completedTasks, isClient])
 
@@ -237,481 +262,453 @@ export default function CareerGuide() {
   const sectionProps = { expandedSections, toggleSection }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white p-4 md:p-6">
-      <div className="max-w-2xl mx-auto">
-        {/* Encouragement Toast */}
-        {showEncouragement && (
-          <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce-gentle z-50">
-            {encouragements[Math.floor(Math.random() * encouragements.length)]}
-          </div>
-        )}
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+      {/* Subtle gradient background */}
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 -z-10" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800/20 via-transparent to-transparent -z-10" />
 
+      <div className="max-w-2xl mx-auto px-4 py-12 md:py-16">
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
-            <Music className="w-8 h-8 text-indigo-600" />
+        <motion.header
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-800 border border-slate-700 rounded-2xl mb-6">
+            <Music2 className="w-8 h-8 text-slate-300" />
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Ana&apos;s Career Guide</h1>
-          <p className="text-gray-600">Your roadmap to full-time worship ministry</p>
-        </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+            Career Transition Guide
+          </h1>
+          <p className="text-slate-400 text-lg">Your roadmap to full-time worship ministry</p>
+        </motion.header>
 
-        {/* Rotating Tip */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl mb-6 shadow-md">
-          <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 flex-shrink-0 mt-1" />
-            <p className="text-sm md:text-base">{tips[currentTip]}</p>
+        {/* Rotating Insight */}
+        <motion.div
+          className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 mb-8 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-amber-900/30 border border-amber-700/30 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentTip}
+                className="text-slate-300 leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {tips[currentTip]}
+              </motion.p>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
 
         {/* Progress */}
-        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-medium text-gray-700">Your Progress</span>
-            <span className="text-indigo-600 font-semibold">
-              {completedCount} / {totalTasks}
+        <motion.div
+          className="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <span className="font-medium text-slate-300">Progress</span>
+            <span className="text-sm text-slate-400">
+              {completedCount} of {totalTasks} completed
             </span>
           </div>
-          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
-              style={{ width: `${progress}%` }}
+          <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
             />
           </div>
-          {progress === 100 && (
-            <p className="text-center text-green-600 font-medium mt-3">You&apos;re fully prepared! Now trust God&apos;s timing.</p>
-          )}
-          {progress > 0 && progress < 100 && (
-            <p className="text-center text-gray-500 text-sm mt-2">
-              {progress < 30
-                ? 'Great start! Keep building momentum.'
-                : progress < 60
-                  ? "You're making real progress!"
-                  : progress < 90
-                    ? 'Almost there! Finish strong.'
-                    : 'So close! Just a few more to go.'}
+          {progress > 0 && (
+            <p className="text-center text-slate-500 text-sm mt-4">
+              {progress === 100
+                ? 'Preparation complete. Trust the process.'
+                : progress >= 75
+                  ? 'Excellent progress. Final steps ahead.'
+                  : progress >= 50
+                    ? 'Solid momentum. Keep building.'
+                    : progress >= 25
+                      ? 'Good foundation established.'
+                      : 'Every completed task matters.'}
             </p>
           )}
-        </div>
+        </motion.div>
 
         {/* Weekly Focus */}
-        <Section id="weekly" icon={Target} title={`This Week: ${weeklyFocus.focus}`} color="indigo" badge={`Week ${Math.min(Math.max(currentWeek, 1), 6)}`} {...sectionProps}>
-          <div className="bg-indigo-50 p-4 rounded-lg mb-4">
-            <p className="text-indigo-800 font-medium mb-3">Your focus this week:</p>
-            <ul className="space-y-2">
+        <Section
+          id="weekly"
+          icon={Target}
+          title={`This Week: ${weeklyFocus.focus}`}
+          badge={`Week ${Math.min(Math.max(currentWeek, 1), 6)}`}
+          {...sectionProps}
+        >
+          <div className="bg-slate-800/50 border border-slate-700/30 rounded-lg p-5 mb-4">
+            <p className="text-slate-300 font-medium mb-4">Current priorities:</p>
+            <ul className="space-y-3">
               {weeklyFocus.tasks.map((task, i) => (
-                <li key={i} className="flex items-center gap-2 text-indigo-700">
-                  <div className="w-2 h-2 bg-indigo-400 rounded-full" />
+                <li key={i} className="flex items-center gap-3 text-slate-400">
+                  <ArrowRight className="w-4 h-4 text-slate-600" />
                   {task}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="p-4 bg-amber-50 rounded-lg border-l-4 border-amber-400">
-            <p className="text-amber-800 font-medium flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              March 1 Goal: ~6 weeks away
-            </p>
-            <p className="text-amber-700 text-sm mt-1">
-              Stay focused but don&apos;t rush God&apos;s process. The right fit matters more than the fast fit.
-            </p>
+          <div className="flex items-start gap-3 p-4 bg-amber-950/20 border border-amber-800/30 rounded-lg">
+            <Clock className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-amber-200 font-medium">March 1 Target</p>
+              <p className="text-amber-200/70 text-sm mt-1">
+                Maintain focus without rushing discernment. The right fit matters more than speed.
+              </p>
+            </div>
           </div>
         </Section>
 
         {/* Welcome Section */}
-        <Section id="welcome" icon={Heart} title="Hey Ana" color="pink" {...sectionProps}>
-          <div className="space-y-4 text-gray-700">
-            <p>Will asked me to put this together for you, and I&apos;m genuinely excited about what&apos;s ahead for you.</p>
+        <Section id="welcome" icon={Heart} title="Welcome" {...sectionProps}>
+          <div className="space-y-4 text-slate-400 leading-relaxed">
+            <p>This guide was created to support your transition from education to full-time worship ministry.</p>
             <p>
-              Here&apos;s what I want you to know upfront: <strong>you&apos;re not starting from zero.</strong> You&apos;ve been doing worship ministry
-              for six years. The setting is changing, but the calling isn&apos;t new.
+              <span className="text-slate-200">Important context:</span> You bring six years of consistent worship leadership experience.
+              The environment is changing, but the calling you&apos;ve been cultivating is not new.
             </p>
             <p>
-              This guide is interactive – check things off as you go, and I&apos;ll be here cheering you on. Let&apos;s get you into
-              full-time ministry by March.
+              Track your progress through this interactive checklist. Your data saves automatically and persists between sessions.
             </p>
-            <div className="bg-pink-50 p-4 rounded-lg mt-4">
-              <p className="text-pink-800 font-medium">How to use this guide:</p>
-              <ul className="text-pink-700 text-sm mt-2 space-y-1">
-                <li>• Tap sections to expand them</li>
-                <li>• Check off tasks as you complete them</li>
-                <li>• Come back daily to stay on track</li>
-                <li>• Your progress is saved automatically</li>
+            <div className="bg-slate-800/50 border border-slate-700/30 rounded-lg p-5 mt-6">
+              <p className="text-slate-300 font-medium mb-3">How to use this guide:</p>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-slate-600" /> Expand sections to explore each topic</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-slate-600" /> Check off tasks as you complete them</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-slate-600" /> Review weekly to maintain momentum</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-slate-600" /> Progress is saved automatically</li>
               </ul>
             </div>
           </div>
         </Section>
 
         {/* Strengths */}
-        <Section id="strengths" icon={Star} title="Your Superpowers" color="amber" badge="Read this when you doubt yourself" {...sectionProps}>
-          <p className="text-gray-600 mb-4">When imposter syndrome hits, come back here:</p>
+        <Section id="strengths" icon={Star} title="Your Qualifications" badge="Reference" {...sectionProps}>
+          <p className="text-slate-400 mb-5">When self-doubt surfaces, review these concrete qualifications:</p>
           <div className="space-y-3">
             {[
-              { text: '6+ years of weekly worship leading', desc: 'not occasional fill-ins, consistent leadership' },
-              { text: "You've built teams from scratch", desc: 'recruited students, trained them, watched them grow' },
-              { text: 'Elementary through high school', desc: 'you can lead any age group' },
-              { text: 'Guitar AND piano', desc: 'that flexibility is rare and valuable' },
-              { text: 'Musical theatre degree from Anderson', desc: 'trained vocalist, stage presence, performance confidence' },
-              { text: 'Italy and Guatemala missions', desc: 'your heart is bigger than one church' },
+              { title: 'Consistent Leadership', desc: 'Six years of weekly worship leading—not occasional fill-ins' },
+              { title: 'Team Development', desc: 'Recruited, trained, and developed student worship teams' },
+              { title: 'Age Range Flexibility', desc: 'Experience leading elementary through high school' },
+              { title: 'Instrumental Versatility', desc: 'Proficiency in both guitar and piano leadership' },
+              { title: 'Formal Training', desc: 'Musical theatre degree with vocal and performance training' },
+              { title: 'Global Perspective', desc: 'International missions experience in Italy and Guatemala' },
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg">
-                <span className="text-amber-500 text-lg">✦</span>
+              <div key={i} className="flex items-start gap-4 p-4 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
                 <div>
-                  <strong>{item.text}</strong> – {item.desc}
+                  <span className="text-slate-200 font-medium">{item.title}</span>
+                  <span className="text-slate-500"> — {item.desc}</span>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-4 p-4 bg-white border-2 border-amber-200 rounded-lg">
-            <p className="text-amber-800 italic">
-              &quot;Ana has been leading worship longer than many worship pastors have been in their current role. She just hasn&apos;t
-              had the title yet.&quot;
+          <div className="mt-6 p-5 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+            <p className="text-slate-400 italic">
+              &quot;Experience duration exceeds many currently serving in titled positions. The credential gap is administrative, not substantive.&quot;
             </p>
           </div>
         </Section>
 
         {/* Reframe */}
-        <Section id="reframe" icon={MessageSquare} title="Translate Your Experience" color="blue" {...sectionProps}>
-          <p className="text-gray-600 mb-4">When talking to search committees, use church language:</p>
-          <div className="space-y-3 text-sm">
+        <Section id="reframe" icon={MessageSquare} title="Translating Your Experience" {...sectionProps}>
+          <p className="text-slate-400 mb-5">When communicating with church search committees, use language that resonates with their context:</p>
+          <div className="space-y-4">
             {[
-              { instead: 'I led chapel services', say: 'I planned and led weekly corporate worship for 200-500 people' },
-              { instead: 'I ran the student praise band', say: 'I recruited, auditioned, trained, and directed volunteer worship teams' },
-              { instead: 'I taught music', say: 'I discipled musicians in their craft and spiritual formation' },
-              { instead: 'I worked with the principal', say: 'I partnered with senior leadership to align worship with organizational vision' },
+              { from: 'Led chapel services', to: 'Planned and led weekly corporate worship for 200-500 attendees' },
+              { from: 'Ran the student praise band', to: 'Recruited, auditioned, trained, and directed volunteer worship teams' },
+              { from: 'Taught music', to: 'Discipled musicians in both craft and spiritual formation' },
+              { from: 'Worked with the principal', to: 'Partnered with senior leadership to align worship with organizational vision' },
             ].map((item, i) => (
-              <div key={i} className="p-3 bg-blue-50 rounded-lg">
-                <div className="text-gray-500 mb-1">Instead of: &quot;{item.instead}&quot;</div>
-                <div className="font-medium text-blue-800">Say: &quot;{item.say}&quot;</div>
+              <div key={i} className="p-4 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+                <p className="text-slate-500 text-sm mb-2">Instead of: &quot;{item.from}&quot;</p>
+                <p className="text-slate-200">→ &quot;{item.to}&quot;</p>
               </div>
             ))}
           </div>
-          <Task id="practice-language" {...taskProps}>
-            Practice saying these out loud 3 times
-          </Task>
+          <div className="mt-4">
+            <Task id="practice-language" {...taskProps}>
+              Practice articulating these translations aloud
+            </Task>
+          </div>
         </Section>
 
         {/* What They Want */}
-        <Section id="lookingFor" icon={Briefcase} title="What Churches Actually Want" color="green" {...sectionProps}>
-          <p className="text-gray-600 mb-4">In priority order – lead with #1 and #2:</p>
-          <ol className="space-y-2">
+        <Section id="lookingFor" icon={Briefcase} title="What Churches Prioritize" {...sectionProps}>
+          <p className="text-slate-400 mb-5">Search committees typically evaluate candidates in this order:</p>
+          <div className="space-y-3">
             {[
-              { title: 'Spiritual maturity & pastoral heart', desc: 'they want a minister first, musician second. You have this.' },
-              { title: 'Team leadership', desc: "can you build, lead, and care for volunteers? Yes, you've done it for years." },
-              { title: 'Theological alignment', desc: 'do you share their convictions about worship?' },
-              { title: 'Musical competence', desc: 'can you lead confidently from guitar or keys? Obviously.' },
-              { title: 'Collaboration', desc: 'will you work well with the senior pastor?' },
-              { title: 'Humility', desc: "worship pastors who make it about themselves don't last" },
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                <span className="font-bold text-green-600 text-lg">{i + 1}</span>
+              { num: 1, title: 'Spiritual Maturity', desc: 'Minister first, musician second' },
+              { num: 2, title: 'Team Leadership', desc: 'Ability to build, lead, and pastor volunteers' },
+              { num: 3, title: 'Theological Alignment', desc: 'Shared convictions about worship philosophy' },
+              { num: 4, title: 'Musical Competence', desc: 'Confident leadership from primary instrument' },
+              { num: 5, title: 'Collaborative Spirit', desc: 'Healthy working relationship with senior pastor' },
+              { num: 6, title: 'Humility', desc: 'Self-awareness without self-promotion' },
+            ].map((item) => (
+              <div key={item.num} className="flex items-start gap-4 p-4 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center text-slate-300 font-semibold text-sm">
+                  {item.num}
+                </span>
                 <div>
-                  <strong>{item.title}</strong> – {item.desc}
+                  <span className="text-slate-200 font-medium">{item.title}</span>
+                  <span className="text-slate-500"> — {item.desc}</span>
                 </div>
-              </li>
+              </div>
             ))}
-          </ol>
+          </div>
         </Section>
 
         {/* Interview Prep */}
-        <Section id="interview" icon={BookOpen} title="Interview Prep" color="purple" {...sectionProps}>
-          <div className="bg-purple-50 p-4 rounded-lg mb-4">
-            <p className="font-medium text-purple-800 mb-3">They&apos;ll probably ask:</p>
-            <ul className="space-y-2 text-sm text-purple-700">
+        <Section id="interview" icon={BookOpen} title="Interview Preparation" {...sectionProps}>
+          <div className="bg-slate-800/30 border border-slate-700/30 rounded-lg p-5 mb-5">
+            <p className="text-slate-300 font-medium mb-4">Anticipate these questions:</p>
+            <ul className="space-y-3 text-slate-400">
               {[
                 'What is your theology of worship?',
-                'How do you balance traditional and contemporary?',
-                'Tell us about a difficult team situation and how you handled it.',
-                'How do you disciple and develop worship team members?',
-                'Why are you leaving education for church ministry?',
+                'How do you approach traditional vs. contemporary balance?',
+                'Describe a challenging team situation and your response.',
+                'How do you approach discipleship within worship ministry?',
+                'Why are you transitioning from education to church ministry?',
               ].map((q, i) => (
-                <li key={i} className="p-2 bg-white rounded">
-                  &quot;{q}&quot;
+                <li key={i} className="flex items-start gap-3">
+                  <span className="text-slate-600">•</span>
+                  {q}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg mb-4">
-            <p className="font-medium text-gray-700 mb-3">Questions you should ask:</p>
-            <ul className="space-y-2 text-sm text-gray-600">
+          <div className="bg-slate-800/30 border border-slate-700/30 rounded-lg p-5 mb-5">
+            <p className="text-slate-300 font-medium mb-4">Questions to ask them:</p>
+            <ul className="space-y-3 text-slate-400">
               {[
-                'What does a typical week look like for this role?',
-                'How does the worship pastor collaborate with the senior pastor on service planning?',
-                "What's the current state of the worship ministry and volunteer team?",
-                'What does success look like in this role after one year?',
-                'How does the church handle conflict or disagreement on worship style?',
+                'What does a typical week look like in this role?',
+                'How does worship planning collaboration work with senior leadership?',
+                'What is the current state of the worship ministry and volunteer team?',
+                'How would you define success in this role after one year?',
+                'How does the church navigate worship style disagreements?',
               ].map((q, i) => (
-                <li key={i} className="p-2 bg-white rounded">
-                  &quot;{q}&quot;
+                <li key={i} className="flex items-start gap-3">
+                  <span className="text-slate-600">•</span>
+                  {q}
                 </li>
               ))}
             </ul>
           </div>
           <div className="space-y-2">
-            <Task id="write-theology" {...taskProps}>
-              Write out your theology of worship (1 page)
-            </Task>
-            <Task id="prep-story" {...taskProps}>
-              Prepare a &quot;difficult team situation&quot; story
-            </Task>
-            <Task id="why-leaving" {...taskProps}>
-              Practice answering &quot;why are you leaving education?&quot;
-            </Task>
+            <Task id="write-theology" {...taskProps}>Write theology of worship document (1 page)</Task>
+            <Task id="prep-story" {...taskProps}>Prepare challenging team situation narrative</Task>
+            <Task id="why-leaving" {...taskProps}>Articulate education-to-ministry transition rationale</Task>
           </div>
         </Section>
 
         {/* Red Flags */}
-        <Section id="redFlags" icon={AlertTriangle} title="Red Flags to Watch For" color="red" {...sectionProps}>
-          <p className="text-gray-600 mb-4">Don&apos;t let desperation make you ignore these:</p>
-          <div className="space-y-2">
+        <Section id="redFlags" icon={AlertTriangle} title="Warning Signs" {...sectionProps}>
+          <p className="text-slate-400 mb-5">Maintain discernment despite urgency. These indicate potential problems:</p>
+          <div className="space-y-3">
             {[
-              "Unclear expectations or \"we'll figure it out as we go\"",
-              'High turnover – always ask how long the last person stayed',
-              'Senior pastor who micromanages worship decisions',
-              'No budget for equipment, training, or team development',
+              'Vague role expectations or "we\'ll figure it out" mentality',
+              'High turnover—always inquire about predecessor tenure',
+              'Senior pastor micromanagement of worship decisions',
+              'No budget allocated for equipment, training, or team development',
               'Congregation deeply divided on worship style',
-              'Significantly below-market pay with "it\'s ministry, not a job" justification',
+              'Below-market compensation justified by "ministry mindset" framing',
             ].map((flag, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg text-red-800">
-                <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                <span>{flag}</span>
+              <div key={i} className="flex items-start gap-4 p-4 bg-red-950/20 border border-red-900/30 rounded-lg">
+                <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <span className="text-red-200/80">{flag}</span>
               </div>
             ))}
           </div>
-          <div className="mt-4 p-4 bg-amber-50 rounded-lg">
-            <p className="text-amber-800 text-sm">
-              <strong>Remember:</strong> A bad fit will make you miserable even faster than your current school situation. It&apos;s
-              okay to be patient for the right opportunity.
+          <div className="mt-5 p-4 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+            <p className="text-slate-400 text-sm">
+              A poor fit will create frustration faster than your current situation. Patient discernment serves long-term calling.
             </p>
           </div>
         </Section>
 
         {/* Practical Action Items */}
-        <Section id="practical" icon={CheckCircle2} title="Your Action Checklist" color="indigo" {...sectionProps}>
-          <p className="text-gray-600 mb-4">Complete these to be fully prepared:</p>
+        <Section id="practical" icon={Check} title="Action Checklist" {...sectionProps}>
+          <p className="text-slate-400 mb-5">Complete these to be fully prepared:</p>
 
-          <p className="font-medium text-gray-700 mt-4 mb-2">Materials</p>
+          <p className="font-medium text-slate-300 mt-6 mb-3 text-sm uppercase tracking-wide">Materials</p>
           <div className="space-y-2">
-            <Task id="resume" priority="high" {...taskProps}>
-              Review and finalize your one-page resume
-            </Task>
-            <Task id="demo" {...taskProps}>
-              Record a 3-4 song worship demo (hymn, modern, upbeat, reflective)
-            </Task>
-            <Task id="video" priority="high" {...taskProps}>
-              Get video of you leading a congregation (not just students)
-            </Task>
-            <Task id="theology" {...taskProps}>
-              Write out your theology of worship (1 page)
-            </Task>
+            <Task id="resume" priority="high" {...taskProps}>Finalize one-page resume</Task>
+            <Task id="demo" {...taskProps}>Record 3-4 song worship demo (hymn, modern, upbeat, reflective)</Task>
+            <Task id="video" priority="high" {...taskProps}>Obtain video of leading congregational worship</Task>
+            <Task id="theology" {...taskProps}>Write theology of worship statement</Task>
           </div>
 
-          <p className="font-medium text-gray-700 mt-6 mb-2">References</p>
+          <p className="font-medium text-slate-300 mt-8 mb-3 text-sm uppercase tracking-wide">References</p>
           <div className="space-y-2">
-            <Task id="ref-pastor" {...taskProps}>
-              Ask a pastor to be a reference
-            </Task>
-            <Task id="ref-worship" {...taskProps}>
-              Ask a fellow worship leader to be a reference
-            </Task>
-            <Task id="ref-disciple" {...taskProps}>
-              Ask someone you&apos;ve discipled to be a reference
-            </Task>
+            <Task id="ref-pastor" {...taskProps}>Secure pastoral reference</Task>
+            <Task id="ref-worship" {...taskProps}>Secure fellow worship leader reference</Task>
+            <Task id="ref-disciple" {...taskProps}>Secure reference from someone you&apos;ve mentored</Task>
           </div>
 
-          <p className="font-medium text-gray-700 mt-6 mb-2">Applications</p>
+          <p className="font-medium text-slate-300 mt-8 mb-3 text-sm uppercase tracking-wide">Applications</p>
           <div className="space-y-2">
-            <Task id="apply-legacy" priority="high" {...taskProps}>
-              Apply to Legacy Church (your home church!)
-            </Task>
-            <Task id="apply-3" {...taskProps}>
-              Apply to at least 3 other positions
-            </Task>
-            <Task id="alerts" {...taskProps}>
-              Set up job alerts on Indeed and ChurchStaffing
-            </Task>
+            <Task id="apply-legacy" priority="high" {...taskProps}>Submit Legacy Church application</Task>
+            <Task id="apply-3" {...taskProps}>Submit applications to 3+ additional positions</Task>
+            <Task id="alerts" {...taskProps}>Configure job alerts on Indeed and ChurchStaffing</Task>
           </div>
 
-          <p className="font-medium text-gray-700 mt-6 mb-2">Prep Work</p>
+          <p className="font-medium text-slate-300 mt-8 mb-3 text-sm uppercase tracking-wide">Research</p>
           <div className="space-y-2">
-            <Task id="salary" {...taskProps}>
-              Research salary expectations ($40k-$65k typical in NC full-time)
-            </Task>
-            <Task id="linkedin" {...taskProps}>
-              Update LinkedIn to reflect worship ministry focus
-            </Task>
+            <Task id="salary" {...taskProps}>Research salary expectations ($40k-$65k NC full-time range)</Task>
+            <Task id="linkedin" {...taskProps}>Update LinkedIn for worship ministry positioning</Task>
           </div>
         </Section>
 
         {/* Legacy Church */}
-        <Section id="legacy" icon={Heart} title="About Legacy Church" color="pink" {...sectionProps}>
-          <p className="text-gray-600 mb-4">Since this is your home church, you have real advantages:</p>
-          <div className="space-y-2 mb-4">
+        <Section id="legacy" icon={Heart} title="Legacy Church Considerations" {...sectionProps}>
+          <p className="text-slate-400 mb-5">As your home church, this opportunity has distinct advantages:</p>
+          <div className="space-y-2 mb-6">
             {[
-              'You already know the culture, congregation, and leadership',
-              "They've seen your character over time – not just an interview version",
-              'You have built-in relationships with potential team members',
-              "You love the church – that'll come through in your application",
+              'Existing knowledge of culture, congregation, and leadership',
+              'Demonstrated character over time, not just interview presentation',
+              'Established relationships with potential team members',
+              'Authentic connection to the church&apos;s mission',
             ].map((item, i) => (
-              <div key={i} className="p-3 bg-green-50 rounded-lg text-green-800">
-                ✓ {item}
+              <div key={i} className="flex items-start gap-3 p-3 bg-emerald-950/20 border border-emerald-900/30 rounded-lg">
+                <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-1" />
+                <span className="text-emerald-200/80">{item}</span>
               </div>
             ))}
           </div>
 
-          <p className="text-gray-600 mb-3 font-medium">But be aware of these dynamics:</p>
+          <p className="text-slate-400 mb-4 font-medium">Navigate these dynamics:</p>
           <div className="space-y-2">
             {[
-              'The dynamic shifts when you become staff – friendships change',
-              'Some may struggle seeing you in a leadership role',
-              'Have very honest conversations about expectations before accepting',
+              'Relational dynamics shift when transitioning to staff',
+              'Some may need time adjusting to your leadership role',
+              'Conduct thorough expectation conversations before acceptance',
             ].map((item, i) => (
-              <div key={i} className="p-3 bg-amber-50 rounded-lg text-amber-800">
-                ⚠ {item}
+              <div key={i} className="flex items-start gap-3 p-3 bg-amber-950/20 border border-amber-900/30 rounded-lg">
+                <span className="text-amber-400 flex-shrink-0">→</span>
+                <span className="text-amber-200/80">{item}</span>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 p-4 bg-pink-50 rounded-lg">
-            <p className="text-pink-800 text-sm">
-              <strong>My take:</strong> Being at your home church isn&apos;t a red flag – it&apos;s an advantage if handled with maturity.
-              Just go in with eyes open about how the relationship dynamics will shift.
+          <div className="mt-5 p-4 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+            <p className="text-slate-400 text-sm">
+              Home church placement isn&apos;t inherently problematic—it&apos;s advantageous when approached with maturity and clear expectations.
             </p>
           </div>
         </Section>
 
         {/* Job Listings */}
-        <Section id="jobs" icon={MapPin} title="Current Job Openings" color="teal" badge="16 positions" {...sectionProps}>
-          <p className="text-gray-600 mb-4">Starting from Charlotte, organized by distance:</p>
+        <Section id="jobs" icon={MapPin} title="Current Openings" badge="16 positions" {...sectionProps}>
+          <p className="text-slate-400 mb-5">Organized by distance from Charlotte:</p>
 
-          <h4 className="font-semibold text-gray-700 mb-3 mt-4 flex items-center gap-2">
-            <span className="w-3 h-3 bg-teal-500 rounded-full"></span>
-            Charlotte Metro (0-15 mi)
-          </h4>
-          <div className="space-y-3">
-            <JobCard
-              title="Pastor of Worship Ministries – Legacy Church"
-              location="Gastonia, NC"
-              distance="Your church!"
-              type="Full-Time"
-              note="This is your primary target → livelegacy.org/job"
-            />
-            <JobCard title="Worship Pastor – ONE39 Church" location="Charlotte, NC" distance="~5 mi" type="Full-Time" />
-            <JobCard
-              title="Director of Contemporary Music – Covenant Presbyterian"
-              location="Charlotte, NC"
-              distance="~8 mi"
-              type="Full-Time"
-            />
-            <JobCard title="Worship Leader/Coordinator – Revelation Truth Center" location="West Charlotte, NC" distance="~10 mi" />
-            <JobCard
-              title="Minister of Music – Mt. Lebanon Baptist"
-              location="Mint Hill, NC"
-              distance="~12 mi"
-              urgent={true}
-              note="Current minister retiring May 2026 – they need someone soon"
-            />
-            <JobCard title="Part-Time Worship Leader – Wilson Grove Baptist" location="Mint Hill, NC" distance="~12 mi" type="Part-Time" />
-            <JobCard
-              title="Director of Worship – Huntersville Presbyterian"
-              location="Huntersville, NC"
-              distance="~13 mi"
-              note="You know this area from Lake Norman Christian School"
-            />
+          <div className="mb-6">
+            <h4 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+              Charlotte Metro (0-15 mi)
+            </h4>
+            <div className="space-y-3">
+              <JobCard
+                title="Pastor of Worship Ministries — Legacy Church"
+                location="Gastonia, NC"
+                distance="Home church"
+                type="Full-Time"
+                note="Primary target → livelegacy.org/job"
+              />
+              <JobCard title="Worship Pastor — ONE39 Church" location="Charlotte, NC" distance="~5 mi" type="Full-Time" />
+              <JobCard title="Director of Contemporary Music — Covenant Presbyterian" location="Charlotte, NC" distance="~8 mi" type="Full-Time" />
+              <JobCard title="Worship Leader/Coordinator — Revelation Truth Center" location="West Charlotte, NC" distance="~10 mi" />
+              <JobCard
+                title="Minister of Music — Mt. Lebanon Baptist"
+                location="Mint Hill, NC"
+                distance="~12 mi"
+                urgent={true}
+                note="Current minister retiring May 2026"
+              />
+              <JobCard title="Part-Time Worship Leader — Wilson Grove Baptist" location="Mint Hill, NC" distance="~12 mi" type="Part-Time" />
+              <JobCard title="Director of Worship — Huntersville Presbyterian" location="Huntersville, NC" distance="~13 mi" />
+            </div>
           </div>
 
-          <h4 className="font-semibold text-gray-700 mb-3 mt-6 flex items-center gap-2">
-            <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
-            Surrounding Area (15-40 mi)
-          </h4>
-          <div className="space-y-3">
-            <JobCard title="Music Director – New Hope Presbyterian" location="Gastonia, NC" distance="~20 mi" type="Full-Time" />
-            <JobCard
-              title="Worship Pastor – Impact Church"
-              location="Rock Hill, SC"
-              distance="~23 mi"
-              type="Full-Time"
-              note="Just across state line – easy commute"
-            />
-            <JobCard title="Associate Pastor of Worship – First Reformed" location="Landis, NC" distance="~26 mi" type="Full-Time" />
+          <div className="mb-6">
+            <h4 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Surrounding Area (15-40 mi)
+            </h4>
+            <div className="space-y-3">
+              <JobCard title="Music Director — New Hope Presbyterian" location="Gastonia, NC" distance="~20 mi" type="Full-Time" />
+              <JobCard title="Worship Pastor — Impact Church" location="Rock Hill, SC" distance="~23 mi" type="Full-Time" note="Across state line—easy commute" />
+              <JobCard title="Associate Pastor of Worship — First Reformed" location="Landis, NC" distance="~26 mi" type="Full-Time" />
+            </div>
           </div>
 
-          <h4 className="font-semibold text-gray-700 mb-3 mt-6 flex items-center gap-2">
-            <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
-            Wider NC (If Open to Relocation)
-          </h4>
-          <div className="space-y-3">
-            <JobCard
-              title="Director of Modern Worship and Youth – Trinity Reformed"
-              location="Conover, NC"
-              distance="~50 mi"
-              note="Combined worship + youth – your student experience is relevant"
-            />
-            <JobCard title="Worship Pastor – Bethany Baptist" location="Wendell, NC (near Raleigh)" distance="~140 mi" />
-            <JobCard
-              title="Pastor for Music and Worship – First Baptist"
-              location="Asheville, NC"
-              distance="~120 mi"
-              note="Beautiful mountain location"
-            />
+          <div className="mb-6">
+            <h4 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+              Wider NC (Relocation Required)
+            </h4>
+            <div className="space-y-3">
+              <JobCard title="Director of Modern Worship and Youth — Trinity Reformed" location="Conover, NC" distance="~50 mi" note="Combined worship + youth role" />
+              <JobCard title="Worship Pastor — Bethany Baptist" location="Wendell, NC" distance="~140 mi" />
+              <JobCard title="Pastor for Music and Worship — First Baptist" location="Asheville, NC" distance="~120 mi" />
+            </div>
           </div>
 
-          <div className="mt-6 p-4 bg-teal-50 rounded-lg">
-            <p className="font-medium text-teal-800 mb-2">Keep searching:</p>
-            <ul className="text-sm text-teal-700 space-y-1">
-              <li>
-                • <strong>ChurchStaffing.com</strong> – best for NC church jobs
-              </li>
-              <li>
-                • <strong>JustChurchJobs.com</strong> – good regional listings
-              </li>
-              <li>
-                • <strong>Indeed.com</strong> – search &quot;worship pastor&quot; + city
-              </li>
-              <li>
-                • <strong>metrolina.org/job-listings</strong> – Charlotte Baptist churches
-              </li>
-              <li>
-                • <strong>cbfnc.org</strong> – Cooperative Baptist Fellowship NC
-              </li>
+          <div className="p-5 bg-slate-800/30 border border-slate-700/30 rounded-lg">
+            <p className="text-slate-300 font-medium mb-3">Job search resources:</p>
+            <ul className="space-y-2 text-sm text-slate-400">
+              <li className="flex items-center gap-2"><ExternalLink className="w-3 h-3" /> ChurchStaffing.com — NC church positions</li>
+              <li className="flex items-center gap-2"><ExternalLink className="w-3 h-3" /> JustChurchJobs.com — Regional listings</li>
+              <li className="flex items-center gap-2"><ExternalLink className="w-3 h-3" /> Indeed.com — &quot;worship pastor&quot; + location</li>
+              <li className="flex items-center gap-2"><ExternalLink className="w-3 h-3" /> metrolina.org/job-listings — Charlotte Baptist</li>
             </ul>
           </div>
 
-          <Task id="set-alerts" {...taskProps}>
-            Set up email alerts on ChurchStaffing and Indeed
-          </Task>
+          <div className="mt-4">
+            <Task id="set-alerts" {...taskProps}>Configure job alerts on primary platforms</Task>
+          </div>
         </Section>
 
-        {/* Final Encouragement */}
-        <div className="text-center mt-8 p-6 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl">
-          <p className="text-indigo-800 font-medium text-lg">You&apos;ve got this, Ana.</p>
-          <p className="text-indigo-600 mt-2">
-            Your experience is more transferable than you think.
-            <br />
-            Trust what God has been building in you.
-          </p>
-          <p className="text-2xl mt-4">💜</p>
-        </div>
-
-        {/* Final Checklist */}
-        <div className="mt-6 p-4 bg-white rounded-xl shadow-sm">
-          <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-            <Send className="w-5 h-5 text-indigo-500" />
-            Before You Close This
+        {/* Final Section */}
+        <motion.div
+          className="mt-8 p-6 bg-slate-800/30 border border-slate-700/30 rounded-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h4 className="font-semibold text-slate-200 mb-4 flex items-center gap-3">
+            <ArrowRight className="w-5 h-5 text-slate-500" />
+            Before closing this session
           </h4>
           <div className="space-y-2">
-            <Task id="read-all" {...taskProps}>
-              Read through all sections at least once
-            </Task>
-            <Task id="pray" {...taskProps}>
-              Pray about which positions to pursue first
-            </Task>
-            <Task id="one-thing" {...taskProps}>
-              Do ONE thing today (even small) toward your goal
-            </Task>
+            <Task id="read-all" {...taskProps}>Review all sections at least once</Task>
+            <Task id="pray" {...taskProps}>Discern which positions to prioritize</Task>
+            <Task id="one-thing" {...taskProps}>Complete one action item today</Task>
           </div>
-        </div>
+        </motion.div>
 
-        <p className="text-center text-gray-400 text-sm mt-8 mb-4">Made with 💜 by Will + Claude</p>
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t border-slate-800 text-center">
+          <p className="text-slate-600 text-sm">
+            Created with care by Will + Claude
+          </p>
+        </footer>
       </div>
     </div>
   )
