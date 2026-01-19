@@ -27,8 +27,8 @@ function loadSavedMessages(): UIMessage[] {
       const parsed = JSON.parse(saved) as UIMessage[]
       return parsed.length > 0 ? parsed : [welcomeMessage]
     }
-  } catch {
-    // Ignore parse errors
+  } catch (error) {
+    console.warn('Failed to load chat history:', error)
   }
   return [welcomeMessage]
 }

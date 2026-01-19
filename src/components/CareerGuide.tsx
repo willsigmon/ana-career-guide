@@ -1141,7 +1141,7 @@ export default function CareerGuide() {
     try {
       const saved = localStorage.getItem('ana-career-tasks')
       if (saved) setCompletedTasks(JSON.parse(saved))
-    } catch { /* ignore */ }
+    } catch (error) { console.warn('Failed to load saved tasks:', error) }
   }, [])
 
   useEffect(() => {
@@ -1151,7 +1151,7 @@ export default function CareerGuide() {
 
   useEffect(() => {
     if (!isClient) return
-    try { localStorage.setItem('ana-career-tasks', JSON.stringify(completedTasks)) } catch { /* ignore */ }
+    try { localStorage.setItem('ana-career-tasks', JSON.stringify(completedTasks)) } catch (error) { console.warn('Failed to save tasks:', error) }
   }, [completedTasks, isClient])
 
   const toggleTask = (id: string) => setCompletedTasks((prev) => ({ ...prev, [id]: !prev[id] }))

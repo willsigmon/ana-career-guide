@@ -55,22 +55,61 @@ const systemPrompt = `You are Ana's Career Coach - a warm, encouraging, and prac
 
 Remember: You're in her corner. She's going to nail this.`
 
+interface MessagePart {
+  type: string
+  text?: string
+}
+
+interface ChatMessage {
+  role: string
+  parts?: MessagePart[]
+  content?: string
+}
+
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  try {
+    // Validate API key exists
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      return new Response(
+        JSON.stringify({ error: 'API key not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
 
-  // Convert UIMessage parts format to content format for streamText
-  const convertedMessages = messages.map((msg: { role: string; parts?: { type: string; text: string }[]; content?: string }) => ({
-    role: msg.role,
-    content: msg.parts
-      ? msg.parts.filter((p: { type: string }) => p.type === 'text').map((p: { text: string }) => p.text).join('')
-      : msg.content || '',
-  }))
+    const body = await req.json()
+    const { messages } = body
 
-  const result = streamText({
-    model: google('gemini-3-flash-preview'),
-    system: systemPrompt,
-    messages: convertedMessages,
-  })
+    // Validate messages array
+    if (!messages || !Array.isArray(messages)) {
+      return new Response(
+        JSON.stringify({ error: 'Messages array is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
 
-  return result.toTextStreamResponse()
+    // Convert UIMessage parts format to content format for streamText
+    const convertedMessages = messages.map((msg: ChatMessage) => ({
+      role: msg.role,
+      content: msg.parts
+        ? msg.parts
+            .filter((p: MessagePart) => p.type === 'text' && p.text)
+            .map((p: MessagePart) => p.text)
+            .join('')
+        : msg.content || '',
+    }))
+
+    const result = streamText({
+      model: google('gemini-3-flash-preview'),
+      system: systemPrompt,
+      messages: convertedMessages,
+    })
+
+    return result.toTextStreamResponse()
+  } catch (error) {
+    console.error('Chat API error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Failed to process chat request' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
 }
