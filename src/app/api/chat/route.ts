@@ -1,4 +1,4 @@
-import { anthropic } from '@ai-sdk/anthropic'
+import { google } from '@ai-sdk/google'
 import { streamText } from 'ai'
 
 export const maxDuration = 30
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json()
 
   const result = streamText({
-    model: anthropic('claude-haiku-4-5'),
+    model: google('gemini-3-flash-preview'),
     system: systemPrompt,
     messages,
   })
