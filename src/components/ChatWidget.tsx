@@ -128,21 +128,21 @@ export default function ChatWidget() {
             className="fixed bottom-6 right-6 z-50 w-[380px] h-[560px] max-h-[80vh] bg-stone-950/95 backdrop-blur-xl border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
+            <div className="flex items-center justify-between p-4 border-b border-white/[0.10]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-amber-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-stone-100 text-sm">Career Coach</h3>
-                  <p className="text-xs text-stone-500">Here to help you prep</p>
+                  <p className="text-xs text-stone-400">Here to help you prep</p>
                 </div>
               </div>
               <div className="flex gap-1">
                 {messages.length > 1 && (
                   <button
                     onClick={clearHistory}
-                    className="p-2 text-stone-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                    className="p-2 text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
                     title="Start fresh"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -181,7 +181,7 @@ export default function ChatWidget() {
                     className={`flex-1 p-3 rounded-2xl text-sm leading-relaxed ${
                       message.role === 'user'
                         ? 'bg-teal-500/10 border border-teal-500/20 text-stone-200'
-                        : 'bg-white/[0.03] border border-white/[0.06] text-stone-300'
+                        : 'bg-white/[0.03] border border-white/[0.10] text-stone-300'
                     }`}
                   >
                     <p className="whitespace-pre-wrap">
@@ -199,7 +199,7 @@ export default function ChatWidget() {
                   <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/20 flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-amber-400" />
                   </div>
-                  <div className="bg-white/[0.03] border border-white/[0.06] p-3 rounded-2xl">
+                  <div className="bg-white/[0.03] border border-white/[0.10] p-3 rounded-2xl">
                     <div className="flex gap-1">
                       <span className="w-2 h-2 bg-amber-400/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                       <span className="w-2 h-2 bg-amber-400/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -212,12 +212,12 @@ export default function ChatWidget() {
               {/* Suggested Prompts - show only if just the welcome message */}
               {messages.length === 1 && (
                 <div className="space-y-2 pt-2">
-                  <p className="text-xs text-stone-500 px-1">Try asking:</p>
+                  <p className="text-xs text-stone-400 px-1">Try asking:</p>
                   {suggestedPrompts.map((prompt, i) => (
                     <button
                       key={i}
                       onClick={() => sendMessage({ text: prompt })}
-                      className="w-full text-left p-2.5 text-xs text-stone-400 bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] rounded-xl transition-all"
+                      className="w-full text-left p-2.5 text-xs text-stone-400 bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.08] rounded-xl transition-all"
                     >
                       {prompt}
                     </button>
@@ -229,14 +229,14 @@ export default function ChatWidget() {
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSubmit} className="p-4 border-t border-white/[0.06]">
+            <form onSubmit={handleSubmit} className="p-4 border-t border-white/[0.10]">
               <div className="flex gap-2">
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask me anything..."
-                  className="flex-1 bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-amber-500/30 transition-colors"
+                  className="flex-1 bg-white/[0.03] border border-white/[0.10] rounded-xl px-4 py-3 text-sm text-stone-200 placeholder:text-stone-400 focus:outline-none focus:border-amber-500/30 transition-colors"
                 />
                 <button
                   type="submit"

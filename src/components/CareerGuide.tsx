@@ -130,7 +130,7 @@ const Task = ({ id, children, priority, completedTasks, toggleTask }: TaskProps)
         ? 'bg-teal-500/10 border-teal-500/20'
         : priority === 'high'
           ? 'bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10'
-          : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04]'
+          : 'bg-white/[0.02] border-white/[0.10] hover:bg-white/[0.04]'
     }`}
     whileHover={{ scale: 1.01 }}
     whileTap={{ scale: 0.99 }}
@@ -149,7 +149,7 @@ const Task = ({ id, children, priority, completedTasks, toggleTask }: TaskProps)
       {completedTasks[id] && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
     </div>
     <div className="relative flex-1">
-      <span className={`leading-relaxed text-sm ${completedTasks[id] ? 'line-through text-stone-500' : 'text-stone-300'}`}>{children}</span>
+      <span className={`leading-relaxed text-sm ${completedTasks[id] ? 'line-through text-stone-400' : 'text-stone-300'}`}>{children}</span>
       {priority === 'high' && !completedTasks[id] && (
         <span className="ml-2 px-2 py-0.5 text-[10px] font-bold text-amber-300 bg-amber-500/20 rounded-full uppercase tracking-wider">
           Priority
@@ -175,7 +175,7 @@ const JobCard = ({ title, location, distance, urgent, note, type, url }: JobCard
           className={`p-4 rounded-2xl border backdrop-blur-sm transition-all cursor-pointer group ${
             urgent
               ? 'border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50'
-              : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12]'
+              : 'border-white/[0.10] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12]'
           }`}
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', stiffness: 400, damping: 25 }}
@@ -184,9 +184,9 @@ const JobCard = ({ title, location, distance, urgent, note, type, url }: JobCard
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <h4 className="font-medium text-stone-200 text-sm truncate group-hover:text-stone-100">{title}</h4>
-                <ExternalLink className="w-3 h-3 text-stone-600 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                <ExternalLink className="w-3 h-3 text-stone-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
               </div>
-              <div className="flex items-center gap-2 text-xs text-stone-500 mt-1.5 flex-wrap">
+              <div className="flex items-center gap-2 text-xs text-stone-400 mt-1.5 flex-wrap">
                 <MapPin className="w-3 h-3" />
                 <span>{location}</span>
                 <span className="text-stone-700">·</span>
@@ -198,7 +198,7 @@ const JobCard = ({ title, location, distance, urgent, note, type, url }: JobCard
                   </>
                 )}
               </div>
-              {note && <p className="text-xs text-stone-600 mt-2">{note}</p>}
+              {note && <p className="text-xs text-stone-400 mt-2">{note}</p>}
             </div>
             {urgent && (
               <span className="flex-shrink-0 px-2 py-1 bg-amber-500/20 text-amber-300 text-[10px] font-bold rounded-full uppercase">
@@ -239,7 +239,7 @@ function StatCard({ icon: Icon, label, value, color, onClick }: {
           <Icon className="w-5 h-5" />
         </div>
         <p className="text-2xl font-bold text-stone-100">{value}</p>
-        <p className="text-sm text-stone-500 mt-1">{label}</p>
+        <p className="text-sm text-stone-400 mt-1">{label}</p>
       </motion.div>
     </MagneticCard>
   )
@@ -262,18 +262,18 @@ function QuickAction({ icon: Icon, label, description, color, onClick }: {
 
   return (
     <motion.button
-      className={`group glass-card rounded-2xl p-4 text-left w-full border border-white/[0.06] ${colors[color]} transition-all`}
+      className={`group glass-card rounded-2xl p-4 text-left w-full border border-white/[0.10] ${colors[color]} transition-all`}
       whileHover={{ y: -2, scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
     >
       <div className="flex items-center gap-3">
-        <Icon className="w-5 h-5 text-stone-500 transition-colors" />
+        <Icon className="w-5 h-5 text-stone-400 transition-colors" />
         <div className="flex-1 min-w-0">
           <p className="font-medium text-stone-200 text-sm">{label}</p>
-          <p className="text-xs text-stone-500 truncate">{description}</p>
+          <p className="text-xs text-stone-400 truncate">{description}</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-stone-600 group-hover:translate-x-1 transition-transform" />
+        <ChevronRight className="w-4 h-4 text-stone-400 group-hover:translate-x-1 transition-transform" />
       </div>
     </motion.button>
   )
@@ -318,18 +318,18 @@ function Sidebar({
 
       {/* Sidebar */}
       <motion.aside
-        className={`fixed top-0 left-0 h-full w-72 bg-stone-950/95 backdrop-blur-xl border-r border-white/[0.06] z-50 flex flex-col
+        className={`fixed top-0 left-0 h-full w-72 bg-stone-950/95 backdrop-blur-xl border-r border-white/[0.10] z-50 flex flex-col
           lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative transition-transform duration-300`}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-white/[0.06]">
+        <div className="p-6 border-b border-white/[0.10]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 flex items-center justify-center">
               <Music className="w-5 h-5 text-amber-400" />
             </div>
             <div>
               <h1 className="font-bold text-stone-100">Ana&apos;s Guide</h1>
-              <p className="text-xs text-stone-500">Your next chapter</p>
+              <p className="text-xs text-stone-400">Your next chapter</p>
             </div>
           </div>
           <button
@@ -341,10 +341,10 @@ function Sidebar({
         </div>
 
         {/* Progress */}
-        <div className="p-4 mx-4 mt-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+        <div className="p-4 mx-4 mt-4 rounded-2xl bg-white/[0.02] border border-white/[0.10]">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-medium text-stone-400">Progress</span>
-            <span className="text-xs text-stone-500">{progress}%</span>
+            <span className="text-xs text-stone-400">{progress}%</span>
           </div>
           <div className="h-2 bg-stone-800/50 rounded-full overflow-hidden">
             <motion.div
@@ -385,7 +385,7 @@ function Sidebar({
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/[0.06]">
+        <div className="p-4 border-t border-white/[0.10]">
           <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/5 border border-amber-500/10">
             <Clock className="w-4 h-4 text-amber-400" />
             <div>
@@ -453,7 +453,7 @@ function DashboardView({
               <AnimatePresence mode="wait">
                 <motion.p
                   key={currentTip}
-                  className="text-stone-400 text-sm leading-relaxed"
+                  className="text-stone-300 text-sm leading-relaxed"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -510,12 +510,12 @@ function DashboardView({
               </div>
               <div>
                 <h3 className="font-semibold text-stone-100">Week {currentWeek}: {weeklyFocus.focus}</h3>
-                <p className="text-xs text-stone-500">Current priorities</p>
+                <p className="text-xs text-stone-400">Current priorities</p>
               </div>
             </div>
             <div className="space-y-3">
               {weeklyFocus.tasks.map((task, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.08]">
                   <div className="w-1.5 h-1.5 rounded-full bg-teal-400" />
                   <span className="text-sm text-stone-300">{task}</span>
                 </div>
@@ -533,7 +533,7 @@ function DashboardView({
               </div>
               <div>
                 <h3 className="font-semibold text-stone-100">Quick Actions</h3>
-                <p className="text-xs text-stone-500">Jump to sections</p>
+                <p className="text-xs text-stone-400">Jump to sections</p>
               </div>
             </div>
             <div className="space-y-2">
@@ -580,7 +580,7 @@ function DashboardView({
               </div>
               <div>
                 <h3 className="font-semibold text-stone-100">Priority Target</h3>
-                <p className="text-xs text-stone-500">Home church opportunity</p>
+                <p className="text-xs text-stone-400">Home church opportunity</p>
               </div>
             </div>
             <span className="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-full">
@@ -591,13 +591,13 @@ function DashboardView({
             href="https://legacychurchgastonia.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-amber-500/20 transition-all group"
+            className="block p-4 rounded-2xl bg-white/[0.02] border border-white/[0.10] hover:bg-white/[0.04] hover:border-amber-500/20 transition-all group"
           >
             <div className="flex items-center gap-2">
               <h4 className="font-medium text-stone-200 group-hover:text-stone-100">Pastor of Worship Ministries — Legacy Church</h4>
-              <ExternalLink className="w-3.5 h-3.5 text-stone-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <ExternalLink className="w-3.5 h-3.5 text-stone-400 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <div className="flex items-center gap-2 text-sm text-stone-500 mt-2">
+            <div className="flex items-center gap-2 text-sm text-stone-400 mt-2">
               <MapPin className="w-4 h-4" />
               <span>Gastonia, NC</span>
               <span className="text-stone-700">·</span>
@@ -605,7 +605,7 @@ function DashboardView({
               <span className="text-stone-700">·</span>
               <span className="text-stone-400">Full-Time</span>
             </div>
-            <p className="text-sm text-stone-500 mt-3">They know you. They&apos;ve watched you grow. This one&apos;s special.</p>
+            <p className="text-sm text-stone-400 mt-3">They know you. They&apos;ve watched you grow. This one&apos;s special.</p>
           </a>
         </div>
       </FadeIn>
@@ -623,7 +623,7 @@ function PreparationView({ completedTasks, toggleTask }: { completedTasks: Recor
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-stone-100">Preparation</h2>
         </div>
-        <p className="text-stone-400">Everything you need to walk in confidently. Most of this? You already have.</p>
+        <p className="text-stone-300">Everything you need to walk in confidently. Most of this? You already have.</p>
       </FadeIn>
 
       {/* Qualifications */}
@@ -647,7 +647,7 @@ function PreparationView({ completedTasks, toggleTask }: { completedTasks: Recor
             ].map((item, i) => (
               <motion.div
                 key={i}
-                className="flex items-start gap-3 p-4 bg-white/[0.02] border border-white/[0.04] rounded-xl"
+                className="flex items-start gap-3 p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
@@ -655,7 +655,7 @@ function PreparationView({ completedTasks, toggleTask }: { completedTasks: Recor
                 <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 flex-shrink-0" />
                 <div>
                   <span className="text-stone-200 text-sm font-medium">{item.title}</span>
-                  <p className="text-stone-500 text-xs mt-0.5">{item.desc}</p>
+                  <p className="text-stone-400 text-xs mt-0.5">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -714,8 +714,8 @@ function PreparationView({ completedTasks, toggleTask }: { completedTasks: Recor
               { from: 'Ran the student praise band', to: 'Recruited, auditioned, trained, and directed volunteer worship teams' },
               { from: 'Taught music', to: 'Discipled musicians in both craft and spiritual formation' },
             ].map((item, i) => (
-              <div key={i} className="p-4 bg-white/[0.02] border border-white/[0.04] rounded-xl">
-                <p className="text-stone-500 text-xs mb-2">Instead of: &quot;{item.from}&quot;</p>
+              <div key={i} className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl">
+                <p className="text-stone-400 text-xs mb-2">Instead of: &quot;{item.from}&quot;</p>
                 <p className="text-stone-200 text-sm flex items-center gap-2">
                   <ArrowRight className="w-4 h-4 text-rose-400 flex-shrink-0" />
                   <span>&quot;{item.to}&quot;</span>
@@ -738,7 +738,7 @@ function JobsView() {
           <h2 className="text-2xl font-bold text-stone-100">Job Openings</h2>
           <span className="px-2 py-1 text-xs font-medium bg-teal-500/20 text-teal-400 rounded-full">16 positions</span>
         </div>
-        <p className="text-stone-400">Real positions, real churches, real opportunities. Your next home is in here somewhere.</p>
+        <p className="text-stone-300">Real positions, real churches, real opportunities. Your next home is in here somewhere.</p>
       </FadeIn>
 
       {/* Charlotte Metro */}
@@ -822,7 +822,7 @@ function JobsView() {
                 href={site.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 p-3 bg-white/[0.02] border border-white/[0.04] rounded-xl text-sm text-stone-400 hover:text-stone-200 hover:bg-white/[0.04] hover:border-white/[0.08] transition-all group"
+                className="flex items-center gap-2 p-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-sm text-stone-400 hover:text-stone-200 hover:bg-white/[0.04] hover:border-white/[0.08] transition-all group"
               >
                 <ExternalLink className="w-4 h-4 group-hover:text-teal-400 transition-colors" />
                 {site.name}
@@ -845,7 +845,7 @@ function ChecklistView({ completedTasks, toggleTask }: { completedTasks: Record<
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-stone-100">Action Checklist</h2>
         </div>
-        <p className="text-stone-400">One checkbox at a time. You don&apos;t have to do it all today.</p>
+        <p className="text-stone-300">One checkbox at a time. You don&apos;t have to do it all today.</p>
       </FadeIn>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -952,7 +952,7 @@ function ResourcesView() {
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-stone-100">Resources</h2>
         </div>
-        <p className="text-stone-400">Cheat sheets for when they ask the hard questions. (You&apos;ll nail them.)</p>
+        <p className="text-stone-300">Cheat sheets for when they ask the hard questions. (You&apos;ll nail them.)</p>
       </FadeIn>
 
       {/* What Churches Want */}
@@ -973,13 +973,13 @@ function ResourcesView() {
               { num: 5, title: 'Collaborative Spirit', desc: 'Healthy relationship with senior pastor' },
               { num: 6, title: 'Humility', desc: 'Self-awareness without self-promotion' },
             ].map((item) => (
-              <div key={item.num} className="flex items-start gap-3 p-4 bg-white/[0.02] border border-white/[0.04] rounded-xl">
+              <div key={item.num} className="flex items-start gap-3 p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl">
                 <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400 font-bold text-xs">
                   {item.num}
                 </span>
                 <div>
                   <span className="text-stone-200 text-sm font-medium">{item.title}</span>
-                  <p className="text-stone-500 text-xs mt-0.5">{item.desc}</p>
+                  <p className="text-stone-400 text-xs mt-0.5">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -1207,7 +1207,7 @@ export default function CareerGuide() {
         {/* Main Content */}
         <main className="flex-1 min-h-screen">
           {/* Mobile Header */}
-          <header className="lg:hidden sticky top-0 z-30 bg-stone-950/80 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3">
+          <header className="lg:hidden sticky top-0 z-30 bg-stone-950/80 backdrop-blur-xl border-b border-white/[0.10] px-4 py-3">
             <div className="flex items-center justify-between">
               <button
                 onClick={() => setSidebarOpen(true)}
@@ -1238,8 +1238,8 @@ export default function CareerGuide() {
             </AnimatePresence>
 
             {/* Footer */}
-            <footer className="mt-16 pt-8 border-t border-white/[0.06] text-center">
-              <p className="text-stone-600 text-sm">Made with love by your biggest fan 💛</p>
+            <footer className="mt-16 pt-8 border-t border-white/[0.10] text-center">
+              <p className="text-stone-400 text-sm">Made with love by your biggest fan 💛</p>
             </footer>
           </div>
         </main>
@@ -1274,9 +1274,9 @@ export default function CareerGuide() {
         .animate-breathe { animation: breathe 8s ease-in-out infinite; }
 
         .glass-card {
-          background: rgba(255, 255, 255, 0.02);
+          background: rgba(255, 255, 255, 0.03);
           backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
       `}</style>
     </div>
