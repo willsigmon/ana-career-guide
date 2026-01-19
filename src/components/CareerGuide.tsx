@@ -328,8 +328,8 @@ function Sidebar({
               <Music className="w-5 h-5 text-amber-400" />
             </div>
             <div>
-              <h1 className="font-bold text-stone-100">Career Guide</h1>
-              <p className="text-xs text-stone-500">Worship Ministry</p>
+              <h1 className="font-bold text-stone-100">Ana&apos;s Guide</h1>
+              <p className="text-xs text-stone-500">Your next chapter</p>
             </div>
           </div>
           <button
@@ -390,7 +390,7 @@ function Sidebar({
             <Clock className="w-4 h-4 text-amber-400" />
             <div>
               <p className="text-xs font-medium text-amber-200">Target: March 1</p>
-              <p className="text-[10px] text-amber-200/50">Stay focused</p>
+              <p className="text-[10px] text-amber-200/50">You&apos;ve got this 💪</p>
             </div>
           </div>
         </div>
@@ -449,7 +449,7 @@ function DashboardView({
               <Sparkles className="w-6 h-6 text-amber-400" />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-stone-100 mb-1">Welcome back</h2>
+              <h2 className="text-lg font-semibold text-stone-100 mb-1">Hey, you. 💛</h2>
               <AnimatePresence mode="wait">
                 <motion.p
                   key={currentTip}
@@ -605,7 +605,7 @@ function DashboardView({
               <span className="text-stone-700">·</span>
               <span className="text-stone-400">Full-Time</span>
             </div>
-            <p className="text-sm text-stone-500 mt-3">Existing relationships + demonstrated character over years of involvement</p>
+            <p className="text-sm text-stone-500 mt-3">They know you. They&apos;ve watched you grow. This one&apos;s special.</p>
           </a>
         </div>
       </FadeIn>
@@ -623,7 +623,7 @@ function PreparationView({ completedTasks, toggleTask }: { completedTasks: Recor
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-stone-100">Preparation</h2>
         </div>
-        <p className="text-stone-400">Materials and qualifications to prepare before applying.</p>
+        <p className="text-stone-400">Everything you need to walk in confidently. Most of this? You already have.</p>
       </FadeIn>
 
       {/* Qualifications */}
@@ -635,7 +635,7 @@ function PreparationView({ completedTasks, toggleTask }: { completedTasks: Recor
             </div>
             <h3 className="font-semibold text-stone-100">Your Qualifications</h3>
           </div>
-          <p className="text-stone-400 text-sm mb-4">When self-doubt surfaces, review these:</p>
+          <p className="text-stone-400 text-sm mb-4">When imposter syndrome shows up (it will), come back here:</p>
           <div className="grid md:grid-cols-2 gap-3">
             {[
               { title: 'Consistent Leadership', desc: 'Six years of weekly worship leading' },
@@ -738,7 +738,7 @@ function JobsView() {
           <h2 className="text-2xl font-bold text-stone-100">Job Openings</h2>
           <span className="px-2 py-1 text-xs font-medium bg-teal-500/20 text-teal-400 rounded-full">16 positions</span>
         </div>
-        <p className="text-stone-400">Current worship ministry positions organized by distance from Charlotte.</p>
+        <p className="text-stone-400">Real positions, real churches, real opportunities. Your next home is in here somewhere.</p>
       </FadeIn>
 
       {/* Charlotte Metro */}
@@ -845,7 +845,7 @@ function ChecklistView({ completedTasks, toggleTask }: { completedTasks: Record<
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-stone-100">Action Checklist</h2>
         </div>
-        <p className="text-stone-400">Complete these items to be fully prepared for your transition.</p>
+        <p className="text-stone-400">One checkbox at a time. You don&apos;t have to do it all today.</p>
       </FadeIn>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -952,7 +952,7 @@ function ResourcesView() {
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-stone-100">Resources</h2>
         </div>
-        <p className="text-stone-400">Reference materials for interviews and decision-making.</p>
+        <p className="text-stone-400">Cheat sheets for when they ask the hard questions. (You&apos;ll nail them.)</p>
       </FadeIn>
 
       {/* What Churches Want */}
@@ -1124,11 +1124,14 @@ export default function CareerGuide() {
   const [isClient, setIsClient] = useState(false)
 
   const tips = [
-    "Six years of consistent worship leadership is significant experience—that's not a starting point, it's a foundation.",
-    "Your musical theatre training provides stage presence and vocal technique that many worship leaders spend years developing.",
-    "Building student worship teams from scratch demonstrates the exact skills churches need.",
-    "Legacy Church has observed your character over years. That continuity of witness matters deeply.",
-    "Each application, regardless of outcome, refines your presentation and clarifies your calling.",
+    "Six years of leading worship isn't beginner territory—you've shepherded hundreds of services. Own that.",
+    "Your theatre training gave you something most worship leaders lack: the ability to lead a room with your presence, not just your voice.",
+    "From elementary kids to high schoolers, you've met people where they are. That range? Churches dream of finding it.",
+    "Italy. Guatemala. Gastonia. Your heart for worship has already crossed borders and cultures.",
+    "Legacy has watched you grow for years. They don't just know your skills—they know your character.",
+    "Every application sharpens your story. Every 'no' is just redirection toward your 'yes.'",
+    "You're not changing careers—you're finally aligning your vocation with your calling.",
+    "The kids you've led in worship? They're learning what it looks like to serve with your whole heart.",
   ]
 
   const totalTasks = 24
@@ -1214,7 +1217,7 @@ export default function CareerGuide() {
               </button>
               <div className="flex items-center gap-2">
                 <Music className="w-5 h-5 text-amber-400" />
-                <span className="font-semibold text-stone-100">Career Guide</span>
+                <span className="font-semibold text-stone-100">Ana&apos;s Guide</span>
               </div>
               <div className="w-10" />
             </div>
@@ -1236,7 +1239,7 @@ export default function CareerGuide() {
 
             {/* Footer */}
             <footer className="mt-16 pt-8 border-t border-white/[0.06] text-center">
-              <p className="text-stone-600 text-sm">Created with care by Will + Claude</p>
+              <p className="text-stone-600 text-sm">Made with love by your biggest fan 💛</p>
             </footer>
           </div>
         </main>
