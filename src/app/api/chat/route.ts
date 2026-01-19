@@ -59,12 +59,15 @@ export async function POST(req: Request) {
   const { messages } = await req.json()
 
   // Convert UIMessage parts format to content format for streamText
-  const convertedMessages = messages.map((msg: { role: string; parts?: { type: string; text: string }[]; content?: string }) => ({
-    role: msg.role,
-    content: msg.parts
-      ? msg.parts.filter((p: { type: string }) => p.type === 'text').map((p: { text: string }) => p.text).join('')
-      : msg.content || '',
-  }))
+  // Filter out the synthetic welcome message (id: 'welcome') - Gemini doesn't allow starting with assistant
+  const convertedMessages = messages
+    .filter((msg: { id?: string }) => msg.id !== 'welcome')
+    .map((msg: { role: string; parts?: { type: string; text: string }[]; content?: string }) => ({
+      role: msg.role,
+      content: msg.parts
+        ? msg.parts.filter((p: { type: string }) => p.type === 'text').map((p: { text: string }) => p.text).join('')
+        : msg.content || '',
+    }))
 
   const result = streamText({
     model: google('gemini-3-flash-preview'),
