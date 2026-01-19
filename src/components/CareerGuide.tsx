@@ -118,6 +118,7 @@ interface JobCardProps {
   urgent?: boolean
   note?: string
   type?: string
+  url?: string
 }
 
 // Task Component
@@ -159,43 +160,57 @@ const Task = ({ id, children, priority, completedTasks, toggleTask }: TaskProps)
 )
 
 // Job Card Component
-const JobCard = ({ title, location, distance, urgent, note, type }: JobCardProps) => (
-  <MagneticCard>
-    <motion.div
-      className={`p-4 rounded-2xl border backdrop-blur-sm transition-all ${
-        urgent
-          ? 'border-amber-500/30 bg-amber-500/5'
-          : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]'
-      }`}
-      whileHover={{ y: -2 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-stone-200 text-sm truncate">{title}</h4>
-          <div className="flex items-center gap-2 text-xs text-stone-500 mt-1.5 flex-wrap">
-            <MapPin className="w-3 h-3" />
-            <span>{location}</span>
-            <span className="text-stone-700">·</span>
-            <span>{distance}</span>
-            {type && (
-              <>
+const JobCard = ({ title, location, distance, urgent, note, type, url }: JobCardProps) => {
+  const searchUrl = url || `https://www.google.com/search?q=${encodeURIComponent(title + ' ' + location + ' job')}`
+
+  return (
+    <MagneticCard>
+      <a
+        href={searchUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block"
+      >
+        <motion.div
+          className={`p-4 rounded-2xl border backdrop-blur-sm transition-all cursor-pointer group ${
+            urgent
+              ? 'border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50'
+              : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12]'
+          }`}
+          whileHover={{ y: -2 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium text-stone-200 text-sm truncate group-hover:text-stone-100">{title}</h4>
+                <ExternalLink className="w-3 h-3 text-stone-600 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              </div>
+              <div className="flex items-center gap-2 text-xs text-stone-500 mt-1.5 flex-wrap">
+                <MapPin className="w-3 h-3" />
+                <span>{location}</span>
                 <span className="text-stone-700">·</span>
-                <span className="text-stone-400">{type}</span>
-              </>
+                <span>{distance}</span>
+                {type && (
+                  <>
+                    <span className="text-stone-700">·</span>
+                    <span className="text-stone-400">{type}</span>
+                  </>
+                )}
+              </div>
+              {note && <p className="text-xs text-stone-600 mt-2">{note}</p>}
+            </div>
+            {urgent && (
+              <span className="flex-shrink-0 px-2 py-1 bg-amber-500/20 text-amber-300 text-[10px] font-bold rounded-full uppercase">
+                Urgent
+              </span>
             )}
           </div>
-          {note && <p className="text-xs text-stone-600 mt-2">{note}</p>}
-        </div>
-        {urgent && (
-          <span className="flex-shrink-0 px-2 py-1 bg-amber-500/20 text-amber-300 text-[10px] font-bold rounded-full uppercase">
-            Urgent
-          </span>
-        )}
-      </div>
-    </motion.div>
-  </MagneticCard>
-)
+        </motion.div>
+      </a>
+    </MagneticCard>
+  )
+}
 
 // Stat Card Component
 function StatCard({ icon: Icon, label, value, color, onClick }: {
@@ -572,8 +587,16 @@ function DashboardView({
               Primary
             </span>
           </div>
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-            <h4 className="font-medium text-stone-200">Pastor of Worship Ministries — Legacy Church</h4>
+          <a
+            href="https://legacychurchgastonia.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-amber-500/20 transition-all group"
+          >
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-stone-200 group-hover:text-stone-100">Pastor of Worship Ministries — Legacy Church</h4>
+              <ExternalLink className="w-3.5 h-3.5 text-stone-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
             <div className="flex items-center gap-2 text-sm text-stone-500 mt-2">
               <MapPin className="w-4 h-4" />
               <span>Gastonia, NC</span>
@@ -583,7 +606,7 @@ function DashboardView({
               <span className="text-stone-400">Full-Time</span>
             </div>
             <p className="text-sm text-stone-500 mt-3">Existing relationships + demonstrated character over years of involvement</p>
-          </div>
+          </a>
         </div>
       </FadeIn>
     </div>
@@ -732,9 +755,10 @@ function JobsView() {
               distance="Home church"
               type="Full-Time"
               note="Primary target"
+              url="https://legacychurchgastonia.com"
             />
-            <JobCard title="Worship Pastor — ONE39 Church" location="Charlotte, NC" distance="~5 mi" type="Full-Time" />
-            <JobCard title="Director of Contemporary Music — Covenant Presbyterian" location="Charlotte, NC" distance="~8 mi" type="Full-Time" />
+            <JobCard title="Worship Pastor — ONE39 Church" location="Charlotte, NC" distance="~5 mi" type="Full-Time" url="https://one39.church" />
+            <JobCard title="Director of Contemporary Music — Covenant Presbyterian" location="Charlotte, NC" distance="~8 mi" type="Full-Time" url="https://covenantpresby.org" />
             <JobCard title="Worship Leader/Coordinator — Revelation Truth Center" location="West Charlotte, NC" distance="~10 mi" />
             <JobCard
               title="Minister of Music — Mt. Lebanon Baptist"
@@ -742,8 +766,9 @@ function JobsView() {
               distance="~12 mi"
               urgent={true}
               note="Minister retiring May 2026"
+              url="https://mtlebanonbaptist.com"
             />
-            <JobCard title="Part-Time Worship Leader — Wilson Grove Baptist" location="Mint Hill, NC" distance="~12 mi" type="Part-Time" />
+            <JobCard title="Part-Time Worship Leader — Wilson Grove Baptist" location="Mint Hill, NC" distance="~12 mi" type="Part-Time" url="https://wilsongrovebaptist.org" />
             <JobCard title="Director of Worship — Huntersville Presbyterian" location="Huntersville, NC" distance="~13 mi" />
           </div>
         </div>
@@ -785,18 +810,22 @@ function JobsView() {
           <h3 className="font-semibold text-stone-200 mb-4">Job Search Resources</h3>
           <div className="grid md:grid-cols-2 gap-3">
             {[
-              'ChurchStaffing.com',
-              'JustChurchJobs.com',
-              'Indeed.com — "worship pastor"',
-              'metrolina.org/job-listings',
+              { name: 'ChurchStaffing.com', url: 'https://www.churchstaffing.com/search?keyword=worship&state=NC' },
+              { name: 'JustChurchJobs.com', url: 'https://www.justchurchjobs.com/jobs?q=worship+pastor&l=North+Carolina' },
+              { name: 'Indeed — "worship pastor NC"', url: 'https://www.indeed.com/jobs?q=worship+pastor&l=North+Carolina' },
+              { name: 'LinkedIn Jobs', url: 'https://www.linkedin.com/jobs/search?keywords=worship%20pastor&location=Charlotte%2C%20North%20Carolina' },
+              { name: 'Metrolina Baptist Association', url: 'https://metrolina.org/job-listings/' },
+              { name: 'Baptist State Convention NC', url: 'https://ncbaptist.org/jobs/' },
             ].map((site, i) => (
               <a
                 key={i}
-                href="#"
-                className="flex items-center gap-2 p-3 bg-white/[0.02] border border-white/[0.04] rounded-xl text-sm text-stone-400 hover:text-stone-200 hover:bg-white/[0.04] transition-colors"
+                href={site.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 p-3 bg-white/[0.02] border border-white/[0.04] rounded-xl text-sm text-stone-400 hover:text-stone-200 hover:bg-white/[0.04] hover:border-white/[0.08] transition-all group"
               >
-                <ExternalLink className="w-4 h-4" />
-                {site}
+                <ExternalLink className="w-4 h-4 group-hover:text-teal-400 transition-colors" />
+                {site.name}
               </a>
             ))}
           </div>
