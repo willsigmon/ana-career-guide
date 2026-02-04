@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys, os, subprocess\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    path = tool_input.get('file_path', '') if isinstance(tool_input, dict) else ''\n    if path and path.endswith(('.ts', '.tsx')):\n        cwd = os.path.dirname(path) or '.'\n        # Find nearest tsconfig.json\n        while cwd and cwd != '/':\n            if os.path.exists(os.path.join(cwd, 'tsconfig.json')):\n                result = subprocess.run(['npx', 'tsc', '--noEmit'], capture_output=True, text=True, timeout=30, cwd=cwd)\n                if result.returncode != 0:\n                    errors = result.stdout[:500] if result.stdout else result.stderr[:500]\n                    print(f'⚠️ TypeScript errors:\\n{errors}', file=sys.stderr)\n                break\n            cwd = os.path.dirname(cwd)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      }
+    ]
+  }
+}
